@@ -5,6 +5,7 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-#export HISTFILE=~/.zsh_history
 export HISTSIZE=10000
 export SAVEHIST=1000000
+export HISTFILE=${HOME}/.zsh_history
 
 setopt hist_ignore_dups
 setopt hist_ignore_all_dups
