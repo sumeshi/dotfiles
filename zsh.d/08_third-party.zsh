@@ -5,3 +5,4 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-#
 # - added by travis gem -
 [ -f /Users/user/.travis/travis.sh ] && source /Users/user/.travis/travis.sh
+export PATH='/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin':"$PATH"
