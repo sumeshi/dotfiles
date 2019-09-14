@@ -1,3 +1,5 @@
+# fuck you fish
+set fish_greeting
 
 # override keybind settings.
 fish_vi_key_bindings
