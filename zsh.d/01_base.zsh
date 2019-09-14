@@ -39,3 +39,6 @@ zstyle ':completion:*:' list-colors ${(s.:.)LS_COLORS}
 
 #automatically run ls after every cd
 #function cd() {builtin cd $@ && ls;}
+
+# disable __pycache__ setting.
+export PYTHONDONTWRITEBYTECODE=1

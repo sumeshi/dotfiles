@@ -7,7 +7,23 @@
 # - utils -
 function removeDS(){ find $1 -name ".DS_Store" -print -exec rm {} ";" }
 function grepstring(){ grep -rnw ./ -e "$1" }
-function notify() { osascript -e 'display notification "command completed." with title "notify"' }
+
+function each() {
+  cmd=$1
+  shift
+  for file in $@; do
+	  $cmd $file
+  done
+}
+
+function notify() { 
+  if [ $# = 1 ]
+  then
+	curl -X POST --data-urlencode "payload={\"channel\": \"#test\", \"username\": \"notify\", \"text\": \"$1\", \"icon_emoji\": \":sushi:\"}" `cat ~/.config/slack/notify_url.txt` > /dev/null 2>&1
+  else
+	osascript -e 'display notification "command completed." with title "notify"' 
+  fi
+}
 
 function gitset(){
 	git config user.name $1

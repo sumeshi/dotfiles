@@ -8,7 +8,6 @@ set fenc=utf-8
 set nocompatible
 
 "util
-set paste
 
 set smarttab
 set autoindent
@@ -35,7 +34,8 @@ nnoremap k gk
 vnoremap > >gv
 vnoremap < <gv
 
-set tabstop=4
+set expandtab
+set tabstop=2
 set shiftwidth=2
 set clipboard=unnamed
 
