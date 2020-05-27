@@ -50,7 +50,7 @@ set showcmd
 set showmatch
 set cursorline
 set laststatus=2
-set showbreak=↪
+"set showbreak=
 
 "graphic
 set t_Co=256

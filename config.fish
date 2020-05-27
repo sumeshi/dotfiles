@@ -49,6 +49,9 @@ alias ll='exa -l'
 alias la='exa -la'
 alias llg='exa -l --git'
 alias llt='exa -l --tree'
+alias cat='bat'
+
+export LC_ALL="C.UTF-8"
 
 set PATH $PATH '/home/linuxbrew/.linuxbrew/bin' '/home/linuxbrew/.linuxbrew/sbin'
 set PATH $PATH $HOME/.pyenv/shims 
