@@ -54,5 +54,6 @@ alias cat='bat'
 export LC_ALL="C.UTF-8"
 
 set PATH $PATH '/home/linuxbrew/.linuxbrew/bin' '/home/linuxbrew/.linuxbrew/sbin'
-set PATH $PATH $HOME/.pyenv/shims 
-eval (pyenv init - | source)
+set PATH $PATH $HOME/.anyenv/bin
+#set PATH $PATH $HOME/.pyenv/shims 
+#eval (pyenv init - | source)
