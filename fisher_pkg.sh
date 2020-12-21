@@ -1,4 +1,4 @@
-fisher add jethrokuan/z
-fisher add 0rax/fish-bd
-fisher add oh-my-fish/plugin-peco
-fisher add tsu-nera/fish-peco_recentd
+fisher install jethrokuan/z
+fisher install 0rax/fish-bd
+fisher install oh-my-fish/plugin-peco
+fisher install tsu-nera/fish-peco_recentd
