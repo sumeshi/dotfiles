@@ -50,6 +50,9 @@ alias la='exa -la'
 alias llg='exa -l --git'
 alias llt='exa -l --tree'
 
-set PATH $PATH '/home/linuxbrew/.linuxbrew/bin' '/home/linuxbrew/.linuxbrew/sbin'
+set PATH $PATH '/usr/local/bin' '/usr/local/sbin' $HOME/.nodebrew/current//bin $HOME/.go/bin
 set PATH $PATH $HOME/.pyenv/shims 
+set PATH $PATH $HOME/.cargo/bin
+set -x GOPATH $HOME/.go
 eval (pyenv init - | source)
+
