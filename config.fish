@@ -54,7 +54,7 @@ alias llt='exa -l --tree'
 export LC_ALL="C.UTF-8"
 
 # set path
-set PATH $PATH '/home/linuxbrew/.linuxbrew/bin' '/home/linuxbrew/.linuxbrew/sbin'
+set PATH $PATH '/home/linuxbrew/.linuxbrew' '/home/linuxbrew/.linuxbrew/bin' '/home/linuxbrew/.linuxbrew/sbin'
 set PATH $PATH $HOME/.anyenv/bin
 
 # initialize envs

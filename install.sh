@@ -21,17 +21,6 @@ sudo apt install build-essential procps curl file git fish
 ## install fisher
 curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
 
-# install packages
-brew bundle
-
-# install extensions
-
-## fisher packages
-fisher install jethrokuan/z
-fisher install 0rax/fish-bd
-fisher install oh-my-fish/plugin-peco
-fisher install tsu-nera/fish-peco_recentd
-
 ## vim monokai theme
 mkdir -p ~/.vim/colors
 cd ~/.vim/colors
