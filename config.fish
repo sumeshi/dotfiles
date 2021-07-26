@@ -50,6 +50,13 @@ alias la='exa -la'
 alias llg='exa -l --git'
 alias llt='exa -l --tree'
 
+# set path
 set PATH $PATH '/home/linuxbrew/.linuxbrew/bin' '/home/linuxbrew/.linuxbrew/sbin'
 set PATH $PATH $HOME/.pyenv/shims 
+set PATH $PATH $HOME/.pyenv/shims 
+set PATH $PATH $HOME/.nodebrew/current/bin
+
+# initialize env
 eval (pyenv init - | source)
+source ~/.cargo/env
+set JAVA_HOME (/usr/libexec/java_home -v 1.8)
