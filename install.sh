@@ -4,6 +4,8 @@
 cd `dirname $0`
 
 # links
+mkdir -p ~/.config/fish
+
 ln -sf "`pwd`/vimrc" ~/.vimrc
 ln -sf "`pwd`/tmux.conf" ~/.tmux.conf
 ln -sf "`pwd`/config.fish" ~/.config/fish/config.fish
