@@ -1,0 +1,12 @@
+---
+- hosts: local
+  become: true
+  tasks:
+    - name: ping
+      shell: ls
+      register: result_ls
+    
+    - name: result_ls
+      debug:
+        msg: "{{ result_ls.stdout }}"
+
