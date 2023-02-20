@@ -14,10 +14,10 @@ ln -sf "`pwd`/.gitconfig_nakano" ~/.gitconfig_nakano
 ln -sf "`pwd`/.gitignore_global" ~/.gitignore_global
 
 # install dependencies
-sudo apt update
+sudo pacman -Syyu
 
 ## install homebrew
-sudo apt install build-essential procps curl file git fish
+sudo pacman -Sy procps curl file git fish peco
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 ## install fisher
