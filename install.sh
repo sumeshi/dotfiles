@@ -11,10 +11,13 @@ ln -sf "`pwd`/tmux.conf" ~/.tmux.conf
 ln -sf "`pwd`/.Xmodmap" ~/.Xmodmap
 ln -sf "`pwd`/.xprofile" ~/.xprofile
 ln -sf "`pwd`/i3config" ~/.config/i3/config
+ln -sf "`pwd`/i3blocks.conf" ~/.config/i3/i3blocks.conf
 ln -sf "`pwd`/config.fish" ~/.config/fish/config.fish
 ln -sf "`pwd`/.gitconfig" ~/.gitconfig
 ln -sf "`pwd`/.gitconfig_nakano" ~/.gitconfig_nakano
 ln -sf "`pwd`/.gitignore_global" ~/.gitignore_global
+
+sudo echo '[[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap' >> /etc/X11/xinit/xinitrc
 
 # install dependencies
 sudo pacman -Syyu
