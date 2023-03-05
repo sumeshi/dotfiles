@@ -23,7 +23,7 @@ sudo echo '[[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap' >> /etc/X11/xinit/xinitrc
 sudo pacman -Syyu
 
 ## install homebrew
-sudo pacman -Sy procps curl file git fish peco feh yay xorg-xmodmap picom
+sudo pacman -Sy procps curl file git fish peco feh yay xorg-xmodmap picom code google-chrome-stable
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 ## install fisher
