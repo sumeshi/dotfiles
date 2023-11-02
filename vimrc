@@ -35,7 +35,8 @@ nnoremap k gk
 vnoremap > >gv
 vnoremap < <gv
 
-set tabstop=4
+set expandtab
+set tabstop=2
 set shiftwidth=2
 set clipboard=unnamed
 
@@ -49,7 +50,7 @@ set showcmd
 set showmatch
 set cursorline
 set laststatus=2
-set showbreak=↪
+"set showbreak=
 
 "graphic
 set t_Co=256

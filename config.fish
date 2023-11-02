@@ -3,13 +3,6 @@ set fish_greeting
 
 # override keybind settings.
 fish_vi_key_bindings
-function fish_user_key_bindings
-  bind -M insert -m default \cr 'peco_select_history (commandline -b)'
-  bind -M insert -m default \cx\ck peco_kill
-  bind -M insert -m default \cx\cr peco_recentd
-  bind -M insert -m default jj force-repaint
-  bind -M insert -m default \cf end-of-line
-end
 
 # functions
 function git_branch
@@ -49,10 +42,4 @@ alias ll='exa -l'
 alias la='exa -la'
 alias llg='exa -l --git'
 alias llt='exa -l --tree'
-
-set PATH $PATH '/usr/local/bin' '/usr/local/sbin' $HOME/.nodebrew/current//bin $HOME/.go/bin
-set PATH $PATH $HOME/.pyenv/shims 
-set PATH $PATH $HOME/.cargo/bin
-set -x GOPATH $HOME/.go
-eval (pyenv init - | source)
 
