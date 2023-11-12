@@ -11,7 +11,7 @@
         "revision": "d9dc1435ef484d5e628c0ac74356b828f65e3fe7"
       },
       "homebrew/cask-fonts": {
-        "revision": "3cfc1c330399ff1155f75b2c75499a62d16085d1"
+        "revision": "4f6066e395fd7e1f105a5bef750d296e81a45312"
       }
     },
     "brew": {
@@ -635,13 +635,13 @@
     },
     "cask": {
       "visual-studio-code": {
-        "version": "1.84.0",
+        "version": "1.84.2",
         "options": {
           "full_name": "visual-studio-code"
         }
       },
       "iterm2": {
-        "version": "3.4.21",
+        "version": "3.4.22",
         "options": {
           "full_name": "iterm2"
         }
@@ -651,13 +651,19 @@
         "options": {
           "full_name": "font-3270-nerd-font"
         }
+      },
+      "font-hack-nerd-font": {
+        "version": "3.0.2",
+        "options": {
+          "full_name": "font-hack-nerd-font"
+        }
       }
     }
   },
   "system": {
     "macos": {
       "ventura": {
-        "HOMEBREW_VERSION": "4.1.18",
+        "HOMEBREW_VERSION": "4.1.19",
         "HOMEBREW_PREFIX": "/usr/local",
         "Homebrew/homebrew-core": "api",
         "CLT": "15.0.0.0.1.1694021235",

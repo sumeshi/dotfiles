@@ -18,3 +18,4 @@ brew "z"
 
 cask "visual-studio-code"
 cask "iterm2"
+cask "font-hack-nerd-font"
