@@ -37,9 +37,9 @@ function fish_right_prompt
 end
 
 # aliases
-alias ls='exa'
-alias ll='exa -l'
-alias la='exa -la'
-alias llg='exa -l --git'
-alias llt='exa -l --tree'
+alias ls='lsd'
+alias ll='lsd -l'
+alias la='lsd -la'
+alias llg='lsd -l --git'
+alias llt='lsd -l --tree'
 
