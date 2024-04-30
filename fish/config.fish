@@ -43,3 +43,6 @@ alias la='lsd -la'
 alias llg='lsd -l --git'
 alias llt='lsd -l --tree'
 
+# path
+# set -gx VAL PATH
+fish_add_path /home/linuxbrew/.linuxbrew/bin/
