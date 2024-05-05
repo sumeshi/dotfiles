@@ -42,6 +42,7 @@ alias ll='lsd -l'
 alias la='lsd -la'
 alias llg='lsd -l --git'
 alias llt='lsd -l --tree'
+alias n='nnn'
 
 # path
 # set -gx VAL PATH
