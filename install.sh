@@ -7,6 +7,7 @@ cd `dirname $0`
 mkdir -p ~/.config/fish
 
 ln -sf "`pwd`/vim/vimrc" ~/.vimrc
+ln -sf "`pwd`/nvim" ~/.config/nvim
 ln -sf "`pwd`/tmux/tmux.conf" ~/.tmux.conf
 ln -sf "`pwd`/fish/config.fish" ~/.config/fish/config.fish
 ln -sf "`pwd`/git/.gitconfig" ~/.gitconfig
