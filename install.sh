@@ -18,6 +18,7 @@ ln -sf "`pwd`/git/.gitignore_global" ~/.gitignore_global
 ## apt
 apt update
 apt upgrade -y
+apt install build-essential curl -y
 
 ## homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
