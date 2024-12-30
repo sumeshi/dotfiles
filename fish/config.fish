@@ -44,18 +44,14 @@ function fish_right_prompt
 end
 
 # aliases
-alias ls='exa'
-alias ll='exa -l'
-alias la='exa -la'
-alias llg='exa -l --git'
-alias llt='exa -l --tree'
+alias ls='eza'
+alias ll='eza -l'
+alias la='eza -la'
+alias llg='eza -l --git'
+alias llt='eza -l --tree'
 
 # language code
 export LC_ALL="C.UTF-8"
 
 # set path
-set PATH $PATH '/home/linuxbrew/.linuxbrew' '/home/linuxbrew/.linuxbrew/bin' '/home/linuxbrew/.linuxbrew/sbin'
-set PATH $PATH $HOME/.anyenv/bin
-
-# initialize envs
-# source $HOME/.cargo/env
+# set PATH $PATH '/home/linuxbrew/.linuxbrew' '/home/linuxbrew/.linuxbrew/bin' '/home/linuxbrew/.linuxbrew/sbin'

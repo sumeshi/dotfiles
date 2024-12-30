@@ -1,5 +1,4 @@
-# install packages
-brew bundle
+#!/usr/bin/fish
 
 # install extensions
 ## fisher packages

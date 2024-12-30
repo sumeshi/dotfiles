@@ -1,0 +1,11 @@
+[Unit]
+Description=xremap
+
+[Service]
+KillMode=process
+ExecStart=/usr/bin/xremap --device /dev/input/event4 /home/user/.config/xremap/config.yaml
+ExecStop=/usr/bin/killall xremap
+Restart=always
+
+[Install]
+WantedBy=default.target

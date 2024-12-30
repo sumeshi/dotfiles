@@ -6,30 +6,31 @@ cd `dirname $0`
 # links
 mkdir -p ~/.config/fish
 
-ln -sf "`pwd`/vimrc" ~/.vimrc
-ln -sf "`pwd`/tmux.conf" ~/.tmux.conf
-ln -sf "`pwd`/.Xmodmap" ~/.Xmodmap
-ln -sf "`pwd`/.xprofile" ~/.xprofile
-ln -sf "`pwd`/i3config" ~/.config/i3/config
-ln -sf "`pwd`/i3blocks.conf" ~/.config/i3/i3blocks.conf
-ln -sf "`pwd`/config.fish" ~/.config/fish/config.fish
-ln -sf "`pwd`/.gitconfig" ~/.gitconfig
-ln -sf "`pwd`/.gitconfig_nakano" ~/.gitconfig_nakano
-ln -sf "`pwd`/.gitignore_global" ~/.gitignore_global
-
-sudo echo '[[ -f ~/.Xmodmap ]] && xmodmap ~/.Xmodmap' >> /etc/X11/xinit/xinitrc
+ln -sf "`pwd`/alacritty/alacritty.toml" ~/.config/alacritty/alacritty.toml
+ln -sf "`pwd`/alacritty/themes" ~/.config/alacritty/themes
+ln -sf "`pwd`/fish/config.fish" ~/.config/fish/config.fish
+ln -sf "`pwd`/ghostty/config" ~/.config/ghostty/config
+ln -sf "`pwd`/git/.gitconfig" ~/.gitconfig
+ln -sf "`pwd`/git/.gitconfig_nakano" ~/.gitconfig_nakano
+ln -sf "`pwd`/git/.gitignore_global" ~/.gitignore_global
+ln -sf "`pwd`/google-chrome/chrome-flags.conf" ~/.config/chrome-flags.conf
+ln -sf "`pwd`/systemd/xremap.service" ~/.config/systemd/user/xremap.service
+ln -sf "`pwd`/tmux/tmux.conf" ~/.tmux.conf
+ln -sf "`pwd`/vim/vimrc" ~/.vimrc
+ln -sf "`pwd`/xremap/config.yaml" ~/.config/xremap/config.yaml
 
 # install dependencies
 sudo pacman -Syyu
 
-## install homebrew
-sudo pacman -Sy procps curl file git fish peco feh yay xorg-xmodmap picom code google-chrome-stable
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+## install packages
+sudo pacman -Sy curl file git yay
+yay -Sy fish peco bat eza fd httpie lazygit ripgrep ripgrep-all tmux
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 ## install fisher
 curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
 
-## vim monokai theme
+## install vim theme
 mkdir -p ~/.vim/colors
 cd ~/.vim/colors
 git clone https://github.com/tomasr/molokai

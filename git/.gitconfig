@@ -6,9 +6,6 @@
 [includeIf "gitdir:~/github/"]
 	path = .gitconfig_nakano
 
-[includeIf "gitdir:~/lab/"]
-	path = .gitconfig_nakano
-
 [core]
 	excludesfile = \"$HOME\"/.gitignore_global
 
