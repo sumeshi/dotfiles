@@ -24,7 +24,7 @@ sudo pacman -Syyu
 
 ## install packages
 sudo pacman -Sy curl file git yay
-yay -Sy fish peco bat eza fd httpie lazygit ripgrep ripgrep-all tmux
+yay -Sy fish bat eza fd httpie lazygit ripgrep ripgrep-all tmux yazi zoxide fzf
 # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 ## install fisher

@@ -4,11 +4,7 @@ set fish_greeting
 # override keybind settings.
 fish_vi_key_bindings
 function fish_user_key_bindings
-  bind -M insert -m default \cr 'peco_select_history (commandline -b)'
-  bind -M insert -m default \cx\ck peco_kill
-  bind -M insert -m default \cx\cr peco_recentd
   bind -M insert -m default jj force-repaint
-  bind -M insert -m default \cf end-of-line
 end
 
 # functions
@@ -40,18 +36,24 @@ function fish_prompt
 end
 
 function fish_right_prompt
-    echo (set_color blue)"["(prompt_pwd)"]"(set_color brblack)(git_branch)
+    echo "["(prompt_pwd)"]" (git_branch)
 end
 
 # aliases
+## ls
 alias ls='eza'
 alias ll='eza -l'
 alias la='eza -la'
 alias llg='eza -l --git'
 alias llt='eza -l --tree'
 
+## file manager
+alias y='yazi'
+
 # language code
 export LC_ALL="C.UTF-8"
 
 # set path
 # set PATH $PATH '/home/linuxbrew/.linuxbrew' '/home/linuxbrew/.linuxbrew/bin' '/home/linuxbrew/.linuxbrew/sbin'
+
+zoxide init fish | source
