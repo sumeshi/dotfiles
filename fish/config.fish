@@ -48,7 +48,8 @@ alias llg='eza -l --git'
 alias llt='eza -l --tree'
 
 ## file manager
-alias y='yazi'
+# alias y='yazi'
+alias s='spf'
 
 # language code
 export LC_ALL="C.UTF-8"
