@@ -4,7 +4,7 @@
 	name = ""
 
 [includeIf "gitdir:~/github/"]
-	path = .gitconfig_nakano
+	path = .gitconfig_sumeshi
 
 [core]
 	excludesfile = \"$HOME\"/.gitignore_global

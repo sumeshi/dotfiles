@@ -2,19 +2,22 @@ tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/cask-fonts"
 
+# Core utilities
 brew "bat"
+brew "eza"
 brew "fd"
-brew "fish"
 brew "fzf"
 brew "httpie"
 brew "lazygit"
-brew "lsd"
 brew "neovim"
-brew "nnn"
-brew "rga"
 brew "ripgrep"
+brew "ripgrep-all"
+brew "superfile"
 brew "tmux"
-brew "z"
+brew "zoxide"
 
+# GUI apps
 cask "visual-studio-code"
+
+# fonts
 cask "font-hack-nerd-font"

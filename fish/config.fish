@@ -3,6 +3,9 @@ set fish_greeting
 
 # override keybind settings.
 fish_vi_key_bindings
+function fish_user_key_bindings
+  bind -M insert -m default jj force-repaint
+end
 
 # functions
 function git_branch
@@ -37,13 +40,28 @@ function fish_right_prompt
 end
 
 # aliases
-alias ls='lsd'
-alias ll='lsd -l'
-alias la='lsd -la'
-alias llg='lsd -l --git'
-alias llt='lsd -l --tree'
-alias n='nnn'
+alias ls='eza'
+alias ll='eza -l'
+alias la='eza -la'
+alias llg='eza -l --git'
+alias llt='eza -l --tree'
 
-# path
-# set -gx VAL PATH
-fish_add_path /home/linuxbrew/.linuxbrew/bin/
+# Homebrew path setup
+if test -d /opt/homebrew/bin
+    # macOS (Apple Silicon)
+    fish_add_path /opt/homebrew/bin
+    fish_add_path /opt/homebrew/sbin
+else if test -d /usr/local/bin/brew
+    # macOS (Intel)
+    fish_add_path /usr/local/bin
+    fish_add_path /usr/local/sbin
+else if test -d /home/linuxbrew/.linuxbrew/bin
+    # Linux/WSL
+    fish_add_path /home/linuxbrew/.linuxbrew/bin
+    fish_add_path /home/linuxbrew/.linuxbrew/sbin
+end
+
+# Initialize other tools
+if command -v zoxide >/dev/null
+    zoxide init fish | source
+end

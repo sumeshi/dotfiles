@@ -1,0 +1,7 @@
+modmap:
+  - name: left backslash to leftshift
+    remap:
+      102ND: LEFTSHIFT
+  - name: capslock to ctrl
+    remap:
+      CAPSLOCK: LEFTCTRL 
