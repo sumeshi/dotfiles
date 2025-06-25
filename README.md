@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-$ sudo ./install.sh
+$ sudo ./install.bash
 ```
 
 ### Fonts
