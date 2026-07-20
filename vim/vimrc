@@ -54,8 +54,9 @@ set laststatus=2
 
 "graphic
 set t_Co=256
+set termguicolors
 set visualbell
-colorscheme molokai
+colorscheme catppuccin_mocha
 
 "commandline
 set wildmode=list:longest

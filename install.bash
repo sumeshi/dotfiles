@@ -1,76 +1,143 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+set -Eeuo pipefail
+IFS=$'\n\t'
 
-# Logging functions
-log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
-log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
-log_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+DOTFILES_DIR="$SCRIPT_DIR"
+BREWFILE="$DOTFILES_DIR/homebrew/Brewfile"
 
-# Check if command exists
-command_exists() { command -v "$1" >/dev/null 2>&1; }
+BACKUP_ROOT="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/backups"
+BACKUP_DIR="$BACKUP_ROOT/$(date '+%Y%m%d-%H%M%S')"
 
-# Detect platform
+if [[ -t 1 && -z "${NO_COLOR:-}" ]]; then
+    RED=$'\033[0;31m'
+    GREEN=$'\033[0;32m'
+    YELLOW=$'\033[1;33m'
+    BLUE=$'\033[0;34m'
+    NC=$'\033[0m'
+else
+    RED=''
+    GREEN=''
+    YELLOW=''
+    BLUE=''
+    NC=''
+fi
+
+log_info() {
+    printf '%s[INFO]%s %s\n' "$BLUE" "$NC" "$*"
+}
+
+log_success() {
+    printf '%s[SUCCESS]%s %s\n' "$GREEN" "$NC" "$*"
+}
+
+log_warning() {
+    printf '%s[WARNING]%s %s\n' "$YELLOW" "$NC" "$*"
+}
+
+log_error() {
+    printf '%s[ERROR]%s %s\n' "$RED" "$NC" "$*" >&2
+}
+
+die() {
+    log_error "$*"
+    exit 1
+}
+
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+on_error() {
+    local exit_code=$?
+    local line_number=$1
+
+    log_error "Installation failed at line $line_number with exit code $exit_code."
+    exit "$exit_code"
+}
+
+trap 'on_error "$LINENO"' ERR
+
 detect_platform() {
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        if grep -qi "microsoft" /proc/version 2>/dev/null; then
-            echo "wsl"
-        elif command_exists pacman; then
-            echo "arch"
-        elif command_exists apt; then
-            echo "ubuntu"
-        else
-            echo "linux"
-        fi
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "macos"
-    else
-        echo "unknown"
-    fi
+    case "$(uname -s)" in
+        Darwin)
+            printf '%s\n' "macos"
+            ;;
+
+        Linux)
+            if [[ -n "${WSL_DISTRO_NAME:-}" ]] ||
+                grep -qiE '(microsoft|wsl)' /proc/version 2>/dev/null; then
+                printf '%s\n' "wsl"
+            elif command_exists pacman; then
+                printf '%s\n' "arch"
+            elif command_exists apt-get; then
+                printf '%s\n' "ubuntu"
+            else
+                printf '%s\n' "linux"
+            fi
+            ;;
+
+        *)
+            printf '%s\n' "unknown"
+            ;;
+    esac
 }
 
-# Main installation function
-main() {
-    cd "$(dirname "$0")"
-    local DOTFILES_DIR="$(pwd)"
-    local PLATFORM=$(detect_platform)
-
-    log_info "Starting dotfiles installation from: $DOTFILES_DIR"
-    log_info "Detected platform: $PLATFORM"
-
-    # Create directories
-    create_directories
-
-    # Create symbolic links
-    create_symlinks "$DOTFILES_DIR"
-
-    # Install essential packages only
-    install_essential_packages "$PLATFORM" "$DOTFILES_DIR"
-
-    # Setup fish shell
-    setup_fish "$DOTFILES_DIR"
-
-    # Final setup
-    finalize_setup
-}
-
-# Create necessary directories
 create_directories() {
     log_info "Creating directories..."
-    mkdir -p ~/.config/fish ~/.vim/colors
-    # mkdir -p ~/.config/{ghostty,systemd/user,xremap}  # Uncomment if needed
+
+    mkdir -p \
+        "$HOME/.config/fish" \
+        "$HOME/.config/tmux" \
+        "$HOME/.vim/colors"
 }
 
-# Create symbolic links
+backup_existing_path() {
+    local path=$1
+    local relative_path
+    local backup_path
+
+    relative_path="${path#"$HOME"/}"
+    backup_path="$BACKUP_DIR/$relative_path"
+
+    mkdir -p "$(dirname "$backup_path")"
+    mv "$path" "$backup_path"
+
+    log_warning "Moved existing path to: $backup_path"
+}
+
+create_symlink() {
+    local source_path=$1
+    local destination_path=$2
+
+    if [[ ! -e "$source_path" && ! -L "$source_path" ]]; then
+        log_warning "Source not found: $source_path"
+        return
+    fi
+
+    mkdir -p "$(dirname "$destination_path")"
+
+    if [[ -L "$destination_path" ]] &&
+        [[ "$(readlink "$destination_path")" == "$source_path" ]]; then
+        log_info "Link already exists: $destination_path"
+        return
+    fi
+
+    if [[ -e "$destination_path" || -L "$destination_path" ]]; then
+        backup_existing_path "$destination_path"
+    fi
+
+    ln -s "$source_path" "$destination_path"
+    log_success "Created link: $destination_path"
+}
+
 create_symlinks() {
-    local dotfiles_dir="$1"
-    log_info "Creating symbolic links..."
+    local link
+    local source_relative
+    local destination
+    local source_path
+    local destination_path
 
     local links=(
         "fish/config.fish:~/.config/fish/config.fish"
@@ -79,172 +146,238 @@ create_symlinks() {
         "git/.gitignore_global:~/.gitignore_global"
         "nvim:~/.config/nvim"
         "tmux/tmux.conf:~/.tmux.conf"
+        "tmux/menu.fish:~/.config/tmux/menu.fish"
         "vim/vimrc:~/.vimrc"
-        # Optional configs (uncomment as needed):
-        # "ghostty/config:~/.config/ghostty/config"
-        # "google-chrome/chrome-flags.conf:~/.config/chrome-flags.conf"
-        # "systemd/xremap.service:~/.config/systemd/user/xremap.service"
-        # "xremap/config.yaml:~/.config/xremap/config.yaml"
+        "vim/colors/catppuccin_mocha.vim:~/.vim/colors/catppuccin_mocha.vim"
     )
 
+    log_info "Creating symbolic links..."
+
     for link in "${links[@]}"; do
-        [[ "$link" =~ ^[[:space:]]*# ]] && continue  # Skip commented lines
-        
-        local src="${link%%:*}"
-        local dest="${link##*:}"
-        local dest_expanded="${dest/#\~/$HOME}"
-        
-        if [[ ! -e "$dotfiles_dir/$src" ]]; then
-            log_warning "Source file/directory not found: $src"
-            continue
-        fi
-        
-        local dest_dir=$(dirname "$dest_expanded")
-        [[ ! -d "$dest_dir" ]] && mkdir -p "$dest_dir"
-        
-        if [[ -L "$dest_expanded" && "$(readlink "$dest_expanded")" == "$dotfiles_dir/$src" ]]; then
-            log_info "Link exists: $dest"
-        else
-            # Remove existing file/directory if it exists
-            [[ -e "$dest_expanded" || -L "$dest_expanded" ]] && rm -rf "$dest_expanded"
-            ln -sf "$dotfiles_dir/$src" "$dest_expanded"
-            log_success "Created: $dest"
+        source_relative="${link%%:*}"
+        destination="${link#*:}"
+
+        source_path="$DOTFILES_DIR/$source_relative"
+        destination_path="${destination/#\~/$HOME}"
+
+        create_symlink "$source_path" "$destination_path"
+    done
+
+    if [[ -f "$DOTFILES_DIR/tmux/menu.fish" ]]; then
+        chmod +x "$DOTFILES_DIR/tmux/menu.fish"
+    fi
+}
+
+discover_homebrew() {
+    local candidate
+
+    if command_exists brew; then
+        return
+    fi
+
+    local candidates=(
+        "/opt/homebrew/bin/brew"
+        "/usr/local/bin/brew"
+        "/home/linuxbrew/.linuxbrew/bin/brew"
+        "$HOME/.linuxbrew/bin/brew"
+    )
+
+    for candidate in "${candidates[@]}"; do
+        if [[ -x "$candidate" ]]; then
+            eval "$("$candidate" shellenv)"
+            return
         fi
     done
 }
 
-# Install essential packages only
+ensure_homebrew() {
+    discover_homebrew
+
+    if command_exists brew; then
+        return
+    fi
+
+    command_exists curl ||
+        die "curl is required to install Homebrew."
+
+    log_info "Installing Homebrew..."
+
+    NONINTERACTIVE=1 /bin/bash -c \
+        "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    discover_homebrew
+    command_exists brew ||
+        die "Homebrew was installed but could not be added to PATH."
+}
+
+install_brew_bundle() {
+    if [[ ! -f "$BREWFILE" ]]; then
+        log_warning "Brewfile not found: $BREWFILE"
+        return
+    fi
+
+    log_info "Installing packages from Brewfile..."
+    brew bundle --file="$BREWFILE"
+    log_success "Homebrew packages installed."
+}
+
+install_macos_packages() {
+    ensure_homebrew
+
+    if [[ -f "$BREWFILE" ]]; then
+        install_brew_bundle
+    else
+        log_info "Installing essential Homebrew packages..."
+        brew install git fish tmux fzf vim
+    fi
+}
+
+install_arch_packages() {
+    local packages=(
+        curl
+        git
+        fish
+        tmux
+        fzf
+        vim
+        base-devel
+        procps-ng
+        file
+    )
+
+    log_info "Installing Arch Linux packages..."
+
+    sudo pacman \
+        -Syu \
+        --needed \
+        --noconfirm \
+        "${packages[@]}"
+
+    if command_exists brew && [[ -f "$BREWFILE" ]]; then
+        install_brew_bundle
+    else
+        log_info "Homebrew bundle installation was skipped."
+    fi
+}
+
+install_ubuntu_packages() {
+    local packages=(
+        curl
+        git
+        fish
+        tmux
+        fzf
+        vim
+        build-essential
+        procps
+        file
+    )
+
+    log_info "Installing Ubuntu packages..."
+
+    sudo apt-get update
+    sudo apt-get install -y "${packages[@]}"
+
+    ensure_homebrew
+    install_brew_bundle
+}
+
 install_essential_packages() {
-    local platform="$1"
-    local dotfiles_dir="$2"
+    local platform=$1
 
     case "$platform" in
-        "macos")
-            install_homebrew_packages "$dotfiles_dir"
+        macos)
+            install_macos_packages
             ;;
-        "arch")
-            install_arch_essentials
+
+        arch)
+            install_arch_packages
             ;;
-        "ubuntu"|"wsl")
-            install_ubuntu_essentials
+
+        ubuntu | wsl)
+            install_ubuntu_packages
             ;;
+
+        linux)
+            log_warning "Unsupported Linux distribution. Package installation was skipped."
+            ;;
+
         *)
-            log_warning "Unknown platform: $platform"
+            log_warning "Unsupported platform. Package installation was skipped."
             ;;
     esac
 }
 
-# Homebrew package installation (macOS)
-install_homebrew_packages() {
-    local dotfiles_dir="$1"
-    
-    if ! command_exists brew; then
-        log_info "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
-    
-    log_info "Installing packages via Homebrew..."
-    if [[ -f "$dotfiles_dir/homebrew/Brewfile" ]]; then
-        brew bundle --file="$dotfiles_dir/homebrew/Brewfile"
-        log_success "Homebrew packages installed"
-    else
-        log_warning "Brewfile not found"
-    fi
-}
-
-# Arch Linux essentials only
-install_arch_essentials() {
-    log_info "Installing essential packages..."
-    sudo pacman -Syu --noconfirm
-    
-    local essentials=(curl git fish)
-    for pkg in "${essentials[@]}"; do
-        if ! pacman -Qi "$pkg" >/dev/null 2>&1; then
-            sudo pacman -S --noconfirm "$pkg" || log_warning "Failed to install: $pkg"
-        fi
-    done
-    
-    log_info "For additional packages, install Homebrew first, then: brew bundle --file=homebrew/Brewfile"
-}
-
-# Ubuntu/WSL essentials only
-install_ubuntu_essentials() {
-    log_info "Installing essential packages..."
-    sudo apt update && sudo apt upgrade -y
-    
-    local essentials=(curl git fish build-essential procps file)
-    for pkg in "${essentials[@]}"; do
-        if ! dpkg -l | grep -q "^ii.*$pkg"; then
-            sudo apt install -y "$pkg" || log_warning "Failed to install: $pkg"
-        fi
-    done
-    
-    # Install Homebrew for Linux
-    if ! command_exists brew; then
-        log_info "Installing Homebrew for Linux..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        
-        # Add to PATH for current session
-        if [[ -f /home/linuxbrew/.linuxbrew/bin/brew ]]; then
-            eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-        fi
-    fi
-    
-    # Install packages via Homebrew
-    if command_exists brew; then
-        log_info "Installing packages via Homebrew..."
-        brew bundle --file=homebrew/Brewfile
-    fi
-}
-
-# Setup fish shell
 setup_fish() {
-    local dotfiles_dir="$1"
-    
+    local fish_path
+
     if ! command_exists fish; then
-        log_warning "Fish shell not found. Install it first, then run fish/setup_fish.fish"
+        log_warning "Fish shell is not installed."
         return
     fi
 
-    log_info "Setting fish as default shell..."
-    local fish_path=$(which fish)
-    if [[ "$SHELL" != "$fish_path" ]]; then
-        if ! grep -q "$fish_path" /etc/shells; then
-            echo "$fish_path" | sudo tee -a /etc/shells >/dev/null
-        fi
-        chsh -s "$fish_path" || log_warning "Failed to set fish as default shell"
-    fi
-    
-    log_info "To setup fish extensions, run: fish fish/setup_fish.fish"
-}
+    fish_path="$(command -v fish)"
 
-# Install vim theme
-install_vim_theme() {
-    if [[ ! -f ~/.vim/colors/molokai.vim ]]; then
-        log_info "Installing vim molokai theme..."
-        local temp_dir=$(mktemp -d)
-        cd "$temp_dir"
-        git clone https://github.com/tomasr/molokai.git
-        cp molokai/colors/molokai.vim ~/.vim/colors/
-        cd - && rm -rf "$temp_dir"
+    if [[ "${SHELL:-}" == "$fish_path" ]]; then
+        log_info "Fish is already the default shell."
+        return
+    fi
+
+    log_info "Setting fish as the default shell..."
+
+    if ! grep -Fxq "$fish_path" /etc/shells; then
+        printf '%s\n' "$fish_path" |
+            sudo tee -a /etc/shells >/dev/null
+    fi
+
+    if chsh -s "$fish_path"; then
+        log_success "Default shell changed to fish."
+    else
+        log_warning "Failed to change the default shell."
     fi
 }
 
-# Final setup and messages
+reload_tmux() {
+    if ! command_exists tmux; then
+        return
+    fi
+
+    if ! tmux list-sessions >/dev/null 2>&1; then
+        return
+    fi
+
+    if tmux source-file "$HOME/.tmux.conf"; then
+        log_success "Reloaded tmux configuration."
+    else
+        log_warning "Failed to reload tmux configuration."
+    fi
+}
+
 finalize_setup() {
-    install_vim_theme
-    
-    log_success "Dotfiles installation completed!"
-    log_info ""
-    log_info "Next steps:"
-    log_info "  1. Restart your terminal or run 'exec fish'"
-    log_info "  2. Setup fish extensions: fish fish/setup_fish.fish"
-    log_info ""
-    log_info "Optional configurations (uncomment in install.sh):"
-    log_info "  • Ghostty terminal emulator"
-    log_info "  • Google Chrome Wayland flags" 
-    log_info "  • xremap key remapping"
+    log_success "Dotfiles installation completed."
+
+    if [[ -d "$BACKUP_DIR" ]]; then
+        log_info "Existing files were backed up to: $BACKUP_DIR"
+    fi
+
+    log_info "Restart the terminal or run: exec fish"
+    log_info "Install fish extensions with: fish fish/setup_fish.fish"
 }
 
-# Run main function
+main() {
+    local platform
+
+    platform="$(detect_platform)"
+
+    log_info "Dotfiles directory: $DOTFILES_DIR"
+    log_info "Detected platform: $platform"
+
+    install_essential_packages "$platform"
+    create_directories
+    create_symlinks
+    setup_fish
+    reload_tmux
+    finalize_setup
+}
+
 main "$@"

@@ -46,12 +46,31 @@ alias la='eza -la'
 alias llg='eza -l --git'
 alias llt='eza -l --tree'
 
+fish_add_path $HOME/.local/bin
+
+# Initialize other tools
+if command -v zoxide >/dev/null
+    zoxide init fish | source
+end
+
+# ============================================================
+# Machine-specific settings
+# ============================================================
+
+# WSL (Windows interop)
+if command -v ssh.exe >/dev/null
+    alias cdc='cd /mnt/c/Users/$USER'
+    alias cdd='cd /mnt/d'
+    alias ssh='ssh.exe'
+    alias ssh-add='ssh-add.exe'
+end
+
 # Homebrew path setup
 if test -d /opt/homebrew/bin
     # macOS (Apple Silicon)
     fish_add_path /opt/homebrew/bin
     fish_add_path /opt/homebrew/sbin
-else if test -d /usr/local/bin/brew
+else if test -x /usr/local/bin/brew
     # macOS (Intel)
     fish_add_path /usr/local/bin
     fish_add_path /usr/local/sbin
@@ -59,9 +78,4 @@ else if test -d /home/linuxbrew/.linuxbrew/bin
     # Linux/WSL
     fish_add_path /home/linuxbrew/.linuxbrew/bin
     fish_add_path /home/linuxbrew/.linuxbrew/sbin
-end
-
-# Initialize other tools
-if command -v zoxide >/dev/null
-    zoxide init fish | source
 end
